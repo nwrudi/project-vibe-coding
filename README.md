@@ -21,9 +21,11 @@ projectvibecoding/
 │   ├── index.ts          # Server entry point
 │   ├── db/
 │   │   ├── index.ts      # Koneksi database & Drizzle instance
-│   │   └── schema.ts     # Schema definition (users table)
-│   └── routes/
-│       └── index.ts      # Elysia CRUD route handlers & validation
+│   │   └── schema.ts     # Schema definition (users table with bcrypt password)
+│   ├── routes/
+│   │   └── users-route.ts # Elysia routing endpoint /api/users
+│   └── services/
+│       └── user-service.ts # Logic bisnis (registrasi & bcrypt hashing)
 ├── .env                  # Environment variables
 ├── .env.example          # Environment variables template
 ├── .gitignore            # Git ignore configuration
@@ -86,26 +88,31 @@ Base URL: `http://localhost:3000`
 | Method | Endpoint | Deskripsi |
 |---|---|---|
 | `GET` | `/` | API status & info |
-| `GET` | `/users` | Menampilkan seluruh data user |
-| `GET` | `/users/:id` | Mengambil detail user berdasarkan ID |
-| `POST` | `/users` | Menambahkan user baru |
-| `PUT` | `/users/:id` | Memperbarui data user berdasarkan ID |
-| `DELETE` | `/users/:id` | Menghapus user berdasarkan ID |
+| `POST` | `/api/users` | Registrasi user baru (password di-hash dengan bcrypt) |
 
-### Contoh Request & Payload
+### Contoh Request & Response
 
-#### `POST /users`
+#### `POST /api/users`
+**Request Body:**
 ```json
 {
-  "name": "Budi Santoso",
-  "email": "budi@example.com"
+  "name": "Rudi",
+  "email": "rudi@localhost",
+  "password": "rahasia"
 }
 ```
 
-#### `PUT /users/:id`
+**Response Sukses (200):**
 ```json
 {
-  "name": "Budi S."
+  "data": "OK"
+}
+```
+
+**Response Error (400) - Email Duplikat:**
+```json
+{
+  "Error": "Email sudah terdaftar"
 }
 ```
 
