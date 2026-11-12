@@ -50,3 +50,32 @@ export async function loginUser(email: string, password: string): Promise<string
 
   return token;
 }
+
+export async function getCurrentUser(token: string) {
+  if (!token) {
+    throw new Error('Unauthorized');
+  }
+
+  // 1. Cari session berdasarkan token
+  const sessionResult = await db.select().from(sessions).where(eq(sessions.token, token));
+  if (sessionResult.length === 0) {
+    throw new Error('Unauthorized');
+  }
+
+  const session = sessionResult[0]!;
+
+  // 2. Ambil data user berdasarkan session.userId
+  const userResult = await db.select().from(users).where(eq(users.id, session.userId));
+  if (userResult.length === 0) {
+    throw new Error('Unauthorized');
+  }
+
+  const user = userResult[0]!;
+
+  return {
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    password: user.password,
+  };
+}

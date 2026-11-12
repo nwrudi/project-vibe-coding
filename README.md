@@ -89,6 +89,8 @@ Base URL: `http://localhost:3000`
 |---|---|---|
 | `GET` | `/` | API status & info |
 | `POST` | `/api/users` | Registrasi user baru (password di-hash dengan bcrypt) |
+| `POST` | `/api/users/login` | Login user & mendapatkan session token |
+| `POST` | `/api/users/current` | Mendapatkan data user saat ini berdasarkan Authorization header |
 
 ### Contoh Request & Response
 
@@ -113,6 +115,54 @@ Base URL: `http://localhost:3000`
 ```json
 {
   "Error": "Email sudah terdaftar"
+}
+```
+
+#### `POST /api/users/login`
+**Request Body:**
+```json
+{
+  "email": "rudi@localhost",
+  "password": "rahasia"
+}
+```
+
+**Response Sukses (200):**
+```json
+{
+  "data": "550e8400-e29b-41d4-a716-446655440000"
+}
+```
+
+**Response Error (400):**
+```json
+{
+  "Error": "Email atau password salah"
+}
+```
+
+#### `POST /api/users/current`
+**Headers:**
+```
+Authorization: Bearer 550e8400-e29b-41d4-a716-446655440000
+```
+
+**Response Sukses (200):**
+```json
+{
+  "data": {
+    "id": 1,
+    "name": "rudi",
+    "email": "rudi@localhost",
+    "password": "rahasia"
+  }
+}
+```
+
+**Response Error (401):**
+```json
+{
+  "Error": "Unauthorized"
 }
 ```
 
